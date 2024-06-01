@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../Redux/Store";
-import { useState } from "react";
+
 import {
   messageNodeType,
   setSelectedMessageNode,
@@ -9,13 +9,16 @@ import { NodeContent } from "./NodeContent";
 import { AddEditNodeForm } from "./AddEditNodeForm";
 import { FaBars } from "react-icons/fa";
 import { Button } from "./Button";
+import { toggleSidebar } from "../Redux/Reducers/SidebarSlice";
 
 export const SettingPanel = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isSidebarOpen } = useAppSelector((state) => state.sidebar);
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const selectedMessageNode = useAppSelector(
     (state) => state.messageNodes.selectedMessageNode as messageNodeType | null
   );
   const { messageNodes } = useAppSelector((state) => state.messageNodes);
+  const inFlowMessageNodes = messageNodes.filter((item) => !item.inFlow);
   const dispatch = useAppDispatch();
 
   const handleAddNewMessageNode = () => {
@@ -36,11 +39,15 @@ export const SettingPanel = () => {
     );
   };
 
+  const handleSidebarToggle = () => {
+    dispatch(toggleSidebar(!isSidebarOpen));
+  };
+
   return (
     <>
       <button
         className="fixed top-5 right-5 md:hidden p-2 bg-blue-500 text-white rounded-md"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        onClick={handleSidebarToggle}
       >
         <FaBars />
       </button>
@@ -54,7 +61,7 @@ export const SettingPanel = () => {
           <h1 className="font-bold mb-0 text-center flex-1">Messages</h1>
           <button
             className="md:hidden ml-auto p-2 bg-red-500 text-white rounded-md"
-            onClick={() => setIsSidebarOpen(false)}
+            onClick={handleSidebarToggle}
           >
             X
           </button>
@@ -66,11 +73,16 @@ export const SettingPanel = () => {
             </div>
           ) : (
             <div className="flex flex-col gap-4 mt-2 flex-grow overflow-auto">
-              {messageNodes
-                .filter((item) => !item.inFlow)
-                .map((messageNode) => (
+              {inFlowMessageNodes.length > 0 ? (
+                inFlowMessageNodes.map((messageNode) => (
                   <NodeContent key={messageNode.id} data={messageNode} />
-                ))}
+                ))
+              ) : (
+                <p>
+                  No message nodes are available currently in the panel. You can
+                  add new messages by clicking "Add New Message".
+                </p>
+              )}
               <Button
                 buttonText="Add New Message"
                 onClick={handleAddNewMessageNode}

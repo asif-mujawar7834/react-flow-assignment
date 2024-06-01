@@ -62,12 +62,21 @@ export const AddEditNodeForm = () => {
         placeholder="Enter Message text here..."
         onChange={(e) => setValue(e.target.value)}
         value={value}
-        className="border border-gray-500 rounded-md p-1 text-black font-semibold w-full"
+        className={`border ${
+          value.length > 0
+            ? "border-gray-500"
+            : "border-red-500 outline-red-500"
+        } rounded-md p-1 text-black font-semibold w-full`}
       />
+      {value.length === 0 && (
+        <p className="text-red-500 text-sm mb-2">Please enter a message!</p>
+      )}
+
       <Button
         buttonText={
           selectedMessageNode?.status === "new" ? "Add Message" : "Save Changes"
         }
+        disabled={value.length === 0}
       />
     </form>
   );

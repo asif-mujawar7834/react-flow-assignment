@@ -5,6 +5,7 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   buttonText?: string;
   backgroundColor?: string;
   tooltipText?: string;
+  disabled?: boolean;
 }
 
 interface NodeContentProps {
