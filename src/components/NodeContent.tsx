@@ -1,4 +1,5 @@
-import { FaTrash } from "react-icons/fa6";
+import React from "react";
+import { FaTrash } from "react-icons/fa";
 import { FaPen, FaTimes } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../Redux/Store";
 import {
@@ -11,12 +12,17 @@ import { NodeContentProps } from "../../types";
 import { showToast } from "../Redux/Reducers/ToastSlice";
 import { toggleSidebar } from "../Redux/Reducers/SidebarSlice";
 import { RiMessage2Line } from "react-icons/ri";
+
+// Define the NodeContent component
+
 export const NodeContent: React.FC<NodeContentProps> = ({ data }) => {
+  // Redux hooks to access state and dispatch actions
   const { messageNodes } = useAppSelector((state) => state.messageNodes);
   const { isSidebarOpen } = useAppSelector((state) => state.sidebar);
   const messageNode = messageNodes.find((item) => item.id === data.id);
   const dispatch = useAppDispatch();
 
+  // Function to handle node selection
   const handleNodeSelect = () => {
     if (
       window.matchMedia("(max-width: 768px)").matches &&
@@ -27,6 +33,7 @@ export const NodeContent: React.FC<NodeContentProps> = ({ data }) => {
     dispatch(setSelectedMessageNode(messageNode));
   };
 
+  // Function to remove node from flow
   const handleRemoveNode = () => {
     dispatch(
       showToast({
@@ -42,11 +49,13 @@ export const NodeContent: React.FC<NodeContentProps> = ({ data }) => {
     );
   };
 
+  // Function to delete node
   const handleDeleteNode = () => {
     dispatch(showToast({ message: "Message Node Deleted.", type: "success" }));
     dispatch(deleteMessageNode({ id: messageNode?.id }));
   };
 
+  // Render the component
   return (
     <div className="w-full border border-black shadow-lg rounded-lg overflow-hidden bg-white">
       <div className="bg-[#a6dfd6] p-2 flex items-center justify-between w-full">

@@ -9,23 +9,29 @@ import {
 import { showToast } from "../Redux/Reducers/ToastSlice";
 import { Button } from "./Button";
 
+// Define the AddEditNodeForm component
 export const AddEditNodeForm = () => {
+  // Redux hooks to access state and dispatch actions
   const selectedMessageNode = useAppSelector(
     (state) => state.messageNodes.selectedMessageNode as messageNodeType | null
   );
   const dispatch = useAppDispatch();
 
+  // Memoize the data from selectedMessageNode
   const data = useMemo(
     () => selectedMessageNode?.data ?? { label: "" },
     [selectedMessageNode]
   );
 
+  // State to manage the input value
   const [value, setValue] = useState(data?.label);
 
+  // Update input value when data changes
   useEffect(() => {
     setValue(data?.label);
   }, [data]);
 
+  // Handle form submission
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (selectedMessageNode?.status === "new") {
@@ -56,6 +62,7 @@ export const AddEditNodeForm = () => {
     dispatch(setSelectedMessageNode(null));
   };
 
+  // Render the form
   return (
     <form onSubmit={handleSubmit}>
       <textarea

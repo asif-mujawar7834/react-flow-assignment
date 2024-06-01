@@ -11,7 +11,9 @@ import { toggleSidebar } from "../Redux/Reducers/SidebarSlice";
 import { NodeContent } from "./NodeContent";
 import { OnDragStartHandler } from "../../types";
 
+// Define the SettingPanel component
 export const SettingPanel = () => {
+  // Redux hooks to access state and dispatch actions
   const { isSidebarOpen } = useAppSelector((state) => state.sidebar);
   const selectedMessageNode = useAppSelector(
     (state) => state.messageNodes.selectedMessageNode as messageNodeType | null
@@ -20,6 +22,7 @@ export const SettingPanel = () => {
   const inFlowMessageNodes = messageNodes.filter((item) => !item.inFlow);
   const dispatch = useAppDispatch();
 
+  // Function to add a new message node
   const handleAddNewMessageNode = () => {
     dispatch(
       setSelectedMessageNode({
@@ -38,10 +41,12 @@ export const SettingPanel = () => {
     );
   };
 
+  // Function to toggle the sidebar
   const handleSidebarToggle = () => {
     dispatch(toggleSidebar(!isSidebarOpen));
   };
 
+  // Callback function for handling drag start events
   const onDragStart: OnDragStartHandler = (event, nodeData) => {
     event.dataTransfer.setDragImage(event.currentTarget, 0, 0);
     event.dataTransfer.setData(
@@ -51,6 +56,7 @@ export const SettingPanel = () => {
     event.dataTransfer.effectAllowed = "move";
   };
 
+  // Render the component
   return (
     <>
       <button

@@ -31,16 +31,21 @@ import { showToast } from "../Redux/Reducers/ToastSlice";
 import { Button } from "./Button";
 import { OnDragOverHandler } from "../../types";
 
+// Define custom node types
 const nodeTypes = {
   custom: CustomNode,
 };
 
+// Define the main Flow component
 export const Flow = () => {
+  // Ref to the ReactFlow container
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
+  // State to store the ReactFlow instance
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
 
+  // Redux hooks to access state and dispatch actions
   const { messageNodes, messageNodeEdges } = useAppSelector(
     (state) => state.messageNodes
   );
@@ -49,18 +54,22 @@ export const Flow = () => {
   );
   const dispatch = useAppDispatch();
 
+  // Custom hooks to manage nodes and edges state
   const [nodes, setNodes, onNodesChange] = useNodesState(messageNodes);
   const [edges, setEdgesState, onEdgesChange] = useEdgesState(edgeData);
 
+  // Filter nodes when the messageNodes state changes
   useEffect(() => {
     const filteredNodes = messageNodes.filter((item) => item.inFlow);
     setNodes(filteredNodes);
   }, [messageNodes, setNodes]);
 
+  // Update edges when the messageNodeEdges state changes
   useEffect(() => {
     setEdgesState(edgeData);
   }, [edgeData, setEdgesState]);
 
+  // Callback function for when a connection is created
   const onConnect: OnConnect = useCallback(
     (connection: Connection) => {
       const { source, target } = connection;
@@ -78,6 +87,7 @@ export const Flow = () => {
     [dispatch, edgeData]
   );
 
+  // Callback function for when a node is dragged
   const onNodeDragStop: NodeDragHandler = useCallback(
     (_, node) => {
       dispatch(
@@ -87,6 +97,7 @@ export const Flow = () => {
     [dispatch]
   );
 
+  // Callback function for when edges are deleted
   const onEdgesDelete: OnEdgesDelete = useCallback(
     (edges) => {
       if (edges.length > 0) {
@@ -97,6 +108,7 @@ export const Flow = () => {
     [dispatch]
   );
 
+  // Function to handle saving the flow
   const handleSaveFlow = () => {
     const filteredMessageNodes = messageNodes.filter((item) => item.inFlow);
     const isFlowValid =
@@ -111,6 +123,7 @@ export const Flow = () => {
     dispatch(showToast({ message, type }));
   };
 
+  // Callback function for handling drag over events
   const onDragOver: OnDragOverHandler = useCallback((event) => {
     event.preventDefault();
     if (event.dataTransfer) {
@@ -118,6 +131,7 @@ export const Flow = () => {
     }
   }, []);
 
+  // Callback function for handling drop events
   const onDrop: OnDragOverHandler = useCallback(
     (event) => {
       event.preventDefault();
@@ -151,6 +165,7 @@ export const Flow = () => {
     [reactFlowInstance, setNodes, dispatch]
   );
 
+  // Render the component
   return (
     <div className="flex relative">
       <div className="h-screen w-full p-5 relative">
