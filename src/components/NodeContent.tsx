@@ -1,8 +1,7 @@
 import { FaTrash } from "react-icons/fa6";
-import { FaPen, FaTimes, FaUndo } from "react-icons/fa";
+import { FaPen, FaTimes } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../Redux/Store";
 import {
-  addMessageNodeInFlow,
   deleteMessageNode,
   removeNodeFromFlow,
   setSelectedMessageNode,
@@ -48,13 +47,6 @@ export const NodeContent: React.FC<NodeContentProps> = ({ data }) => {
     dispatch(deleteMessageNode({ id: messageNode?.id }));
   };
 
-  const handleAddNoteInFlow = () => {
-    dispatch(
-      showToast({ message: "Message Node Added to the flow.", type: "success" })
-    );
-    dispatch(addMessageNodeInFlow({ id: messageNode?.id }));
-  };
-
   return (
     <div className="w-full border border-black shadow-lg rounded-lg overflow-hidden bg-white">
       <div className="bg-[#a6dfd6] p-2 flex items-center justify-between w-full">
@@ -64,15 +56,6 @@ export const NodeContent: React.FC<NodeContentProps> = ({ data }) => {
         </div>
         <div>
           <div className="flex gap-2">
-            {!messageNode?.inFlow && (
-              <Button
-                icon={<FaUndo className="text-black cursor-pointer" />}
-                onClick={handleAddNoteInFlow}
-                backgroundColor="none"
-                tooltipText="Add this to flow."
-              />
-            )}
-
             <Button
               icon={
                 messageNode?.inFlow ? (
@@ -100,7 +83,7 @@ export const NodeContent: React.FC<NodeContentProps> = ({ data }) => {
         </div>
       </div>
       <div className="p-2">
-        <h2>{data.data.label}</h2>
+        <h2 className="font-semibold">{data.data.label}</h2>
       </div>
     </div>
   );

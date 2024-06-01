@@ -1,4 +1,5 @@
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import { ButtonHTMLAttributes, ReactNode, DragEvent } from "react";
+import { Node } from "reactflow";
 
 interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: ReactNode;
@@ -11,3 +12,10 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 interface NodeContentProps {
   data: { id: string; data: { label: string }; inFlow?: boolean };
 }
+
+type OnDragOverHandler = (event: DragEvent) => void;
+
+type OnDragStartHandler = (
+  event: DragEvent<HTMLDivElement>,
+  node: Node
+) => void;

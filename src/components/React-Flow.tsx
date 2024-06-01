@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -7,13 +7,14 @@ import ReactFlow, {
   useEdgesState,
   addEdge,
   ReactFlowProvider,
+  BackgroundVariant,
+  OnConnect,
+  Connection,
   Edge,
   NodeDragHandler,
-  Connection,
-  NodeTypes,
   OnEdgesDelete,
-  OnConnect,
-  BackgroundVariant,
+  Node,
+  ReactFlowInstance,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { CustomNode } from "./CustomNode";
@@ -23,16 +24,23 @@ import {
   updateMessageNodePosition,
   addEdge as addEdgeAction,
   removeEdge as removeEdgeAction,
+  addMessageNodeInFlow,
 } from "../Redux/Reducers/MessageNode";
 import { FaSave } from "react-icons/fa";
 import { showToast } from "../Redux/Reducers/ToastSlice";
 import { Button } from "./Button";
+import { OnDragOverHandler } from "../../types";
 
-const nodeTypes: NodeTypes = {
+const nodeTypes = {
   custom: CustomNode,
 };
 
 export const Flow = () => {
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
+
+  const [reactFlowInstance, setReactFlowInstance] =
+    useState<ReactFlowInstance | null>(null);
+
   const { messageNodes, messageNodeEdges } = useAppSelector(
     (state) => state.messageNodes
   );
@@ -80,7 +88,7 @@ export const Flow = () => {
   );
 
   const onEdgesDelete: OnEdgesDelete = useCallback(
-    (edges: Edge[]) => {
+    (edges) => {
       if (edges.length > 0) {
         const edge = edges[0];
         dispatch(removeEdgeAction(edge.id));
@@ -103,6 +111,46 @@ export const Flow = () => {
     dispatch(showToast({ message, type }));
   };
 
+  const onDragOver: OnDragOverHandler = useCallback((event) => {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+    }
+  }, []);
+
+  const onDrop: OnDragOverHandler = useCallback(
+    (event) => {
+      event.preventDefault();
+
+      if (event.dataTransfer && reactFlowWrapper.current && reactFlowInstance) {
+        const reactFlowBounds =
+          reactFlowWrapper.current.getBoundingClientRect();
+
+        const customNodeData = event.dataTransfer.getData(
+          "application/custom-nodedata"
+        );
+
+        if (customNodeData) {
+          const parsedNode = JSON.parse(customNodeData);
+          const position = (reactFlowInstance as ReactFlowInstance).project({
+            x: event.clientX - reactFlowBounds.left,
+            y: event.clientY - reactFlowBounds.top,
+          });
+
+          const newNode: Node = {
+            ...parsedNode,
+            position: position,
+            inFlow: true,
+          };
+
+          setNodes((nds) => nds.concat(newNode));
+          dispatch(addMessageNodeInFlow({ id: newNode.id, position }));
+        }
+      }
+    },
+    [reactFlowInstance, setNodes, dispatch]
+  );
+
   return (
     <div className="flex relative">
       <div className="h-screen w-full p-5 relative">
@@ -117,25 +165,31 @@ export const Flow = () => {
           />
         </div>
         <ReactFlowProvider>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onNodeDragStop={onNodeDragStop}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onEdgesDelete={onEdgesDelete}
-            nodeTypes={nodeTypes}
-            className="bg-slate-100"
-          >
-            <MiniMap />
-            <Controls />
-            <Background
-              gap={16}
-              color="#ddd"
-              variant={BackgroundVariant.Lines}
-            />
-          </ReactFlow>
+          <div className="h-full w-full" ref={reactFlowWrapper}>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodeDragStop={onNodeDragStop}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onEdgesDelete={onEdgesDelete}
+              nodeTypes={nodeTypes}
+              onInit={setReactFlowInstance}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              fitView
+              className="bg-slate-100"
+            >
+              <MiniMap />
+              <Controls />
+              <Background
+                gap={16}
+                color="#ddd"
+                variant={BackgroundVariant.Lines}
+              />
+            </ReactFlow>
+          </div>
         </ReactFlowProvider>
       </div>
       <SettingPanel />

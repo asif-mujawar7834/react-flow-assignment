@@ -30,7 +30,7 @@ const initialState: initialStateType = {
   messageNodes: [
     {
       id: "1",
-      position: { x: 30, y: 30 },
+      position: { x: 10, y: 10 },
       data: { label: "Text Message 1" },
       type: "custom",
       inFlow: true,
@@ -91,6 +91,7 @@ export const MessageNodeSlice = createSlice({
           return {
             ...item,
             inFlow: true,
+            position: action.payload.position,
           };
         }
         return item;
