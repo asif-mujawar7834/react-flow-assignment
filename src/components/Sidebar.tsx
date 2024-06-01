@@ -1,19 +1,18 @@
 import { useAppDispatch, useAppSelector } from "../Redux/Store";
-
 import {
   messageNodeType,
   setSelectedMessageNode,
 } from "../Redux/Reducers/MessageNode";
 import { BsArrowLeft } from "react-icons/bs";
-import { NodeContent } from "./NodeContent";
 import { AddEditNodeForm } from "./AddEditNodeForm";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { Button } from "./Button";
 import { toggleSidebar } from "../Redux/Reducers/SidebarSlice";
+import { NodeContent } from "./NodeContent";
+import { OnDragStartHandler } from "../../types";
 
 export const SettingPanel = () => {
   const { isSidebarOpen } = useAppSelector((state) => state.sidebar);
-  // const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const selectedMessageNode = useAppSelector(
     (state) => state.messageNodes.selectedMessageNode as messageNodeType | null
   );
@@ -41,6 +40,15 @@ export const SettingPanel = () => {
 
   const handleSidebarToggle = () => {
     dispatch(toggleSidebar(!isSidebarOpen));
+  };
+
+  const onDragStart: OnDragStartHandler = (event, nodeData) => {
+    event.dataTransfer.setDragImage(event.currentTarget, 0, 0);
+    event.dataTransfer.setData(
+      "application/custom-nodedata",
+      JSON.stringify(nodeData)
+    );
+    event.dataTransfer.effectAllowed = "move";
   };
 
   return (
@@ -77,7 +85,14 @@ export const SettingPanel = () => {
             <div className="flex flex-col gap-4 mt-2 flex-grow overflow-auto">
               {inFlowMessageNodes.length > 0 ? (
                 inFlowMessageNodes.map((messageNode) => (
-                  <NodeContent key={messageNode.id} data={messageNode} />
+                  <div
+                    key={messageNode.id}
+                    onDragStart={(event) => onDragStart(event, messageNode)}
+                    draggable
+                    className="cursor-move"
+                  >
+                    <NodeContent key={messageNode.id} data={messageNode} />
+                  </div>
                 ))
               ) : (
                 <p>
