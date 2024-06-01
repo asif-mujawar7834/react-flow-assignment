@@ -57,7 +57,7 @@ export const NodeContent: React.FC<NodeContentProps> = ({ data }) => {
 
   return (
     <div className="w-full border border-black shadow-lg rounded-lg overflow-hidden bg-white">
-      <div className="bg-[#C5FFF8] p-2 flex items-center justify-between w-full">
+      <div className="bg-[#a6dfd6] p-2 flex items-center justify-between w-full">
         <div className="flex items-center gap-2">
           <RiMessage2Line />
           <h3 className="font-bold">Send Message</h3>
@@ -92,7 +92,7 @@ export const NodeContent: React.FC<NodeContentProps> = ({ data }) => {
               }
             />
             <Button
-              icon={<FaPen className="text-green-500 cursor-pointer" />}
+              icon={<FaPen className="text-green-600 cursor-pointer" />}
               onClick={handleNodeSelect}
               backgroundColor="none"
             />

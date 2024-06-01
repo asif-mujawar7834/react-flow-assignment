@@ -26,6 +26,7 @@ import {
 } from "../Redux/Reducers/MessageNode";
 import { FaSave } from "react-icons/fa";
 import { showToast } from "../Redux/Reducers/ToastSlice";
+import { Button } from "./Button";
 
 const nodeTypes: NodeTypes = {
   custom: CustomNode,
@@ -108,13 +109,13 @@ export const Flow = () => {
         <h1 className="font-bold text-3xl text-center mb-5">
           Chatbot Flow Builder
         </h1>
-        <button
-          onClick={handleSaveFlow}
-          type="button"
-          className="absolute top-24 right-10 z-10 inline-flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
-          <FaSave className="mr-2" /> Save Flow
-        </button>
+        <div className="absolute top-24 right-10 z-10 inline-flex">
+          <Button
+            onClick={handleSaveFlow}
+            icon={<FaSave className="mr-2" />}
+            buttonText="Save Flow"
+          />
+        </div>
         <ReactFlowProvider>
           <ReactFlow
             nodes={nodes}

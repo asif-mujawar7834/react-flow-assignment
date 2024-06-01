@@ -7,7 +7,7 @@ import {
 import { BsArrowLeft } from "react-icons/bs";
 import { NodeContent } from "./NodeContent";
 import { AddEditNodeForm } from "./AddEditNodeForm";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 import { Button } from "./Button";
 import { toggleSidebar } from "../Redux/Reducers/SidebarSlice";
 
@@ -59,12 +59,14 @@ export const SettingPanel = () => {
         <div className="flex items-center bg-slate-100 mb-2 p-3">
           <BsArrowLeft className="mr-2" />
           <h1 className="font-bold mb-0 text-center flex-1">Messages</h1>
-          <button
-            className="md:hidden ml-auto p-2 bg-red-500 text-white rounded-md"
-            onClick={handleSidebarToggle}
-          >
-            X
-          </button>
+
+          <div className="md:hidden">
+            <Button
+              icon={<FaTimes />}
+              onClick={handleSidebarToggle}
+              backgroundColor="red"
+            />
+          </div>
         </div>
         <div className="flex flex-col p-2 h-full">
           {selectedMessageNode ? (
